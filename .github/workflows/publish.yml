@@ -8,8 +8,6 @@ on:
 jobs:
   convert:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout Current Repository
         uses: actions/checkout@v3
@@ -36,3 +34,9 @@ jobs:
             echo "Failed to create common_md folder."
             exit 1
           fi
+
+      - name: Upload common_md as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: common_md
+          path: common_md
