@@ -8,6 +8,8 @@ on:
 jobs:
   convert:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout Current Repository
         uses: actions/checkout@v3
@@ -35,8 +37,14 @@ jobs:
             exit 1
           fi
 
-      - name: Upload common_md as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: common_md
-          path: common_md
+      - name: Commit and Push common_md
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          if [ -n "$(git status --porcelain common_md)" ]; then
+            git add common_md
+            git commit -m "Add converted markdown files to common_md"
+            git push
+          else
+            echo "No changes to commit in common_md."
+          fi
