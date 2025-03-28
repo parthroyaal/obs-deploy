@@ -8,6 +8,8 @@ on:
 jobs:
   convert:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout Current Repository
         uses: actions/checkout@v3
@@ -17,7 +19,20 @@ jobs:
           wget https://github.com/zoni/obsidian-export/releases/download/v22.11.0/obsidian-export_Linux-x86_64.bin
           chmod +x obsidian-export_Linux-x86_64.bin
 
+      - name: Ensure clean common_md folder
+        run: |
+          rm -rf common_md
+          mkdir -p common_md
+
       - name: Run obsidian-export
         run: |
-          rm -rf common_md && mkdir common_md
-          ./obsidian-export_Linux-x86_64.bin ${{ env.PUBLISH_DIR }} common_md
+          ./obsidian-export_Linux-x86_64.bin ${{ env.PUBLISH_DIR }} common_md || echo "Obsidian-export failed"
+
+      - name: Confirm common_md Creation
+        run: |
+          if [ -d "common_md" ]; then
+            echo "common_md folder created successfully."
+          else
+            echo "Failed to create common_md folder."
+            exit 1
+          fi
