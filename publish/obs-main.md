@@ -1,2 +1,0 @@
-
-	https://app.sevalla.com/
